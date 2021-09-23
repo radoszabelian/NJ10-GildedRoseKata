@@ -4,7 +4,8 @@ namespace GildedRose
 {
     public class GildedRose
     {
-        IList<Item> Items;
+        private IList<Item> Items;
+
         public GildedRose(IList<Item> Items)
         {
             this.Items = Items;
@@ -12,74 +13,65 @@ namespace GildedRose
 
         public void UpdateQuality()
         {
+            const string BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert";
+            const string SULFURAS = "Sulfuras, Hand of Ragnaros";
+            const string BRIE = "Aged Brie";
+
             for (var i = 0; i < Items.Count; i++)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                var actualItem = Items[i];
+
+
+                if (actualItem.Name != BRIE && actualItem.Name != BACKSTAGE && actualItem.Name != SULFURAS && actualItem.Quality > 0)
                 {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
+                    actualItem.Quality--;
                 }
-                else
+                else if (actualItem.Quality < 50)
                 {
-                    if (Items[i].Quality < 50)
+                    actualItem.Quality++;
+
+                    if (actualItem.Name == BACKSTAGE && actualItem.Quality < 50)
                     {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+                        if (actualItem.SellIn < 6)
                         {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
+                            actualItem.Quality += 2;
+                        }
+                        else if (actualItem.SellIn < 11)
+                        {
+                            actualItem.Quality++;
                         }
                     }
                 }
 
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                if (actualItem.Name != SULFURAS)
                 {
-                    Items[i].SellIn = Items[i].SellIn - 1;
+                    actualItem.SellIn--;
                 }
 
-                if (Items[i].SellIn < 0)
+                if (actualItem.SellIn < 0)
                 {
-                    if (Items[i].Name != "Aged Brie")
+                    if (actualItem.Name != BRIE)
                     {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                        if (actualItem.Name != BACKSTAGE)
                         {
-                            if (Items[i].Quality > 0)
+                            if (actualItem.Quality > 0)
                             {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                                if (actualItem.Name != SULFURAS)
                                 {
-                                    Items[i].Quality = Items[i].Quality - 1;
+                                    actualItem.Quality--;
                                 }
                             }
                         }
                         else
                         {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
+                            actualItem.Quality = 0;
                         }
                     }
                     else
                     {
-                        if (Items[i].Quality < 50)
+                        if (actualItem.Quality < 50)
                         {
-                            Items[i].Quality = Items[i].Quality + 1;
+                            actualItem.Quality++;
                         }
                     }
                 }
