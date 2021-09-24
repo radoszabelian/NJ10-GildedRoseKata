@@ -1,81 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using GildedRose;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GildedRose
+namespace GildedRoseKata
 {
-    public class GildedRose
+    class GildedRose
     {
-        private IList<Item> Items;
+        private IEnumerable<Item> Inventory = new List<Item>();
+        private int dayNumber = 0;
 
-        public GildedRose(IList<Item> Items)
+        public GildedRose(IEnumerable<Item> _Inventory)
         {
-            this.Items = Items;
+            Inventory = _Inventory;
         }
 
-        public void UpdateQuality()
+        public string GetCurrentDay()
         {
-            const string BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert";
-            const string SULFURAS = "Sulfuras, Hand of Ragnaros";
-            const string BRIE = "Aged Brie";
+            StringBuilder report = new StringBuilder();
 
-            for (var i = 0; i < Items.Count; i++)
+            report.AppendLine($"-------- day {dayNumber} --------");
+            report.AppendLine("name, sellIn, quality");
+
+            foreach (var item in Inventory)
             {
-                var actualItem = Items[i];
-
-
-                if (actualItem.Name != BRIE && actualItem.Name != BACKSTAGE && actualItem.Name != SULFURAS && actualItem.Quality > 0)
-                {
-                    actualItem.Quality--;
-                }
-                else if (actualItem.Quality < 50)
-                {
-                    actualItem.Quality++;
-
-                    if (actualItem.Name == BACKSTAGE && actualItem.Quality < 50)
-                    {
-                        if (actualItem.SellIn < 6)
-                        {
-                            actualItem.Quality += 2;
-                        }
-                        else if (actualItem.SellIn < 11)
-                        {
-                            actualItem.Quality++;
-                        }
-                    }
-                }
-
-                if (actualItem.Name != SULFURAS)
-                {
-                    actualItem.SellIn--;
-                }
-
-                if (actualItem.SellIn < 0)
-                {
-                    if (actualItem.Name != BRIE)
-                    {
-                        if (actualItem.Name != BACKSTAGE)
-                        {
-                            if (actualItem.Quality > 0)
-                            {
-                                if (actualItem.Name != SULFURAS)
-                                {
-                                    actualItem.Quality--;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            actualItem.Quality = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (actualItem.Quality < 50)
-                        {
-                            actualItem.Quality++;
-                        }
-                    }
-                }
+                report.AppendLine($"{item.Name}, {item.SellIn}, {item.Quality}");
             }
+
+            return report.ToString();
         }
+
+        public void CalculateNextDay()
+        {
+            foreach (var item in Inventory)
+            {
+                item.Update();
+            }
+
+            dayNumber++;
+        }
+
     }
 }
