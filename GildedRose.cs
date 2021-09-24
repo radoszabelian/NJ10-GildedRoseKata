@@ -1,89 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using GildedRose;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GildedRose
+namespace GildedRoseKata
 {
-    public class GildedRose
+    class GildedRose
     {
-        IList<Item> Items;
-        public GildedRose(IList<Item> Items)
+        private IEnumerable<Item> Inventory = new List<Item>();
+        private int dayNumber = 0;
+
+        public GildedRose(IEnumerable<Item> _Inventory)
         {
-            this.Items = Items;
+            Inventory = _Inventory;
         }
 
-        public void UpdateQuality()
+        public string GetCurrentDay()
         {
-            for (var i = 0; i < Items.Count; i++)
+            StringBuilder report = new StringBuilder();
+
+            report.AppendLine($"-------- day {dayNumber} --------");
+            report.AppendLine("name, sellIn, quality");
+
+            foreach (var item in Inventory)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
-                        {
-                            Items[i].Quality = Items[i].Quality + 1;
-                        }
-                    }
-                }
+                report.AppendLine($"{item.Name}, {item.SellIn}, {item.Quality}");
             }
+
+            return report.ToString();
         }
+
+        public void CalculateNextDay()
+        {
+            foreach (var item in Inventory)
+            {
+                item.Update();
+            }
+
+            dayNumber++;
+        }
+
     }
 }
